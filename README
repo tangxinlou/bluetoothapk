@@ -7,3 +7,11 @@ build-make project  编译
 D:\work\bluetoothapk\app\build\outputs\apk\debug\debug.apk 就是编译生成的文件
 
 把debug apk push 到小米手机 sdcard目录，push 不进去，就重复进去开发者模式
+
+
+20241116  添加install.bat 脚本直接安装生成的apk，不再需要手动push
+1.修改hello world 为hello worild txl
+2.点击build-make project 编译
+3.执行install.bat 
+4.查看apk 生效
+
