@@ -1,0 +1,9 @@
+2024116 创建工程 file-new project-empty view  activity
+语言选择 java
+路径选择/d/work/bluetoothapk
+api 选择和自己小米手机对应的api33
+
+build-make project  编译
+D:\work\bluetoothapk\app\build\outputs\apk\debug\debug.apk 就是编译生成的文件
+
+把debug apk push 到小米手机 sdcard目录，push 不进去，就重复进去开发者模式
