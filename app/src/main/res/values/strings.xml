@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">bluetooth</string>
+    <string name="base_tab">基本功能</string>
+    <string name="case_tab">案例功能</string>
+    <string name="list_tab">用例列表</string>
+    <string name="bluetooth_test">蓝牙自动化测试</string>
+    <string name="bluetooth_btn_start_pair">开始配对</string>
+    <string name="bluetooth_btn_recv_pair">接受配对</string>
 </resources>
