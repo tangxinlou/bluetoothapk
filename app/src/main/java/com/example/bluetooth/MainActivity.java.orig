@@ -24,19 +24,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btnSender = (Button)findViewById(R.id.btn_start_sender_activity);
-        btnReceiver  = (Button)findViewById(R.id.btn_start_receiver_activity);
         btnSender.setOnClickListener(listener);
-        btnReceiver.setOnClickListener(listener);
     }
     private void startSender() {
         //Intent senderIntent = new Intent(this, StartPairActivity.class);
         Intent senderIntent = new Intent(this, DeviceListActivity.class);
         startActivity(senderIntent);
-    }
-    private void startReceiver() {
-        Intent receiverIntent = new Intent(this, EnableBluetoothAutoConnectActivity.class);
-        //startActivity(receiverIntent);
-        startActivityForResult(receiverIntent, 0);
     }
     protected void onDestroy() {
         super.onDestroy();

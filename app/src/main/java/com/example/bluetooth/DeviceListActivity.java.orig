@@ -34,6 +34,7 @@ public class DeviceListActivity extends Activity {
             }
         }
     };
+
     final HashMap<BluetoothDevice, String> mDeviceMap = new HashMap<>();
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -97,8 +98,10 @@ public class DeviceListActivity extends Activity {
             this.mBtAdapter.enable();
         }
         final Set<BluetoothDevice> pairedDevices = this.mBtAdapter.getBondedDevices();
+
         registerReceiver(this.mReceiver, new IntentFilter("android.bluetooth.device.action.FOUND"));
         registerReceiver(this.mReceiver, new IntentFilter("android.bluetooth.adapter.action.DISCOVERY_FINISHED"));
+
         Set<BluetoothDevice> devices = new HashSet<>();
         {
             for (BluetoothDevice device : pairedDevices) {

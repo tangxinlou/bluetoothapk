@@ -1,0 +1,51 @@
+--- app/src/main/java/com/example/bluetooth/DeviceListActivity.java
++++ app/src/main/java/com/example/bluetooth/DeviceListActivity.java
+@@ -56,15 +55,12 @@ public class DeviceListActivity extends Activity {
+             }
+         }
+     };
+-
+-
+     private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
+         public void onItemClick(AdapterView<?> adapterView, View view, int arg2, long arg3) {
+             TextView v = (TextView) view.findViewById(R.id.device_name_text);
+             DeviceListActivity.this.mBtAdapter.cancelDiscovery();
+             String info = v.getText().toString();
+             String address = info.substring(info.length() - 17);
+-
+             if (address != null) {
+                 Intent intent = new Intent();
+                 intent.putExtra(BluetoothDevice.EXTRA_DEVICE,
+@@ -77,16 +73,13 @@ public class DeviceListActivity extends Activity {
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_devicelistactivity);
+-
+         scanbutton = (Button)findViewById(R.id.button_scan);
+         scanbutton.setOnClickListener(listener);
+-
+         ArrayAdapter<String> pairedDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name, R.id.device_name_text);
+         ListView pairedListView = (ListView) findViewById(R.id.paired_devices);
+         pairedListView.setAdapter(pairedDevicesArrayAdapter);
+         pairedListView.setClickable (true);
+         pairedListView.setOnItemClickListener(this.mDeviceClickListener);
+-
+         this.mNewDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name, R.id.device_name_text);
+         ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
+         newDevicesListView.setAdapter(this.mNewDevicesArrayAdapter);
+@@ -116,15 +107,12 @@ public class DeviceListActivity extends Activity {
+        
+         pairedDevicesArrayAdapter.add("无配对");
+     }
+-
+-
+     public void doDiscovery() {
+         Log.d(TAG, "doDiscovery()");
+         findViewById(R.id.title_new_devices).setVisibility(0);
+         this.mBtAdapter.startDiscovery();
+         
+     }
+-
+     protected void onDestroy() {
+         super.onDestroy();
+     }
