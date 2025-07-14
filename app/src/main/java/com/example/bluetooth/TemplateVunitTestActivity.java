@@ -17,9 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.List;
 import com.example.bluetooth.VunitTestSettingsActivity;
-//import com.vivo.android.bluetooth.vunit.UnitCase;
-//import com.vivo.android.bluetooth.vunit.UnitResult;
-//import com.vivo.android.bluetooth.vunit.UnitRunner;
+import com.example.bluetooth.vunit.UnitCase;
+import com.example.bluetooth.vunit.UnitResult;
+import com.example.bluetooth.vunit.UnitRunner;
 abstract public class TemplateVunitTestActivity extends Activity {
     public static final String TAG = "TemplateVunitTestActivity";
     private final String ClassName;
@@ -41,9 +41,20 @@ abstract public class TemplateVunitTestActivity extends Activity {
     public static final String SETTINGS_KEY_TYPE_VAL_STR = "s";
     public static final String SETTINGS_KEY_TYPE_VAL_BOX = "b";
     protected JSONArray mSettings;
+
+    protected static final int STATE_DEFAULT = 0;
+    protected static final int STATE_TESTING = 1;
+
+
+    protected UnitRunner mUnitRunner;
+
+
     public TemplateVunitTestActivity() {
+        mState = STATE_DEFAULT;
         ClassName = getClass().getSimpleName();
+        mUnitRunner = new UnitRunner(this);
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("基类"); 
@@ -82,6 +93,14 @@ abstract public class TemplateVunitTestActivity extends Activity {
             int id = v.getId();
            if(id == R.id.btn_check_before_test) {
            }else if (id == R.id.btn_start_search){
+               switch (mState) {
+                   case STATE_DEFAULT:
+                       processStateBaseChange(STATE_TESTING);
+                       break;
+                   case STATE_TESTING:
+                       processStateBaseChange(STATE_DEFAULT);
+                       break;
+               }
            }else if (id == R.id.btn_setting){
                Intent connectionIntent = new Intent(TemplateVunitTestActivity.this,
                        VunitTestSettingsActivity.class);
@@ -112,7 +131,82 @@ abstract public class TemplateVunitTestActivity extends Activity {
         }
         return jsonArray;
     }
+
+
+    protected void processStateBaseChange(int next) {
+        int prev = mState;
+        mState = next;
+        Log.d(TAG, "processStateBaseChange() prev=" + prev + ", next=" + next);
+        switch (prev) {
+            case STATE_DEFAULT:{
+                switch (next) {
+                    case STATE_TESTING:
+                        startTest();
+                        break;
+                    default:
+                        mState = prev;
+                        break;
+                }
+                break;
+            }
+            case STATE_TESTING:{
+                switch (next) {
+                    case STATE_DEFAULT:
+                        stopTest();
+                        break;
+                    default:
+                        mState = prev;
+                        break;
+                }
+                break;
+            }
+            default:
+                mState = prev;
+        }
+    }
+
+
+
+    protected void startTest() {
+        Log.d(TAG,  "startTest()");
+        mWakeLock.acquire();
+        clearList();
+        mTestCnt = 0;
+        mTestCnt1 = 0;
+        mStartButton.setText("停止");
+        BluetoothStateController.getInstance().regCb(mBluetoothStateControllerCallback,
+                BluetoothStateController.REGISTER_TYPE_LISTENER);
+        //ParsingJson(mSettings);
+        mUnitRunner.config(getConfig());
+        mUnitRunner.registStateCb(mStateCb, TAG);
+        mFuture = mExecutorService.submit(() -> {
+            try {
+                mUnitRunner.beforeRun();
+                mUnitRunner.run();
+                mUnitRunner.afterRun();
+            } catch (Exception e) {
+                Log.e(TAG, "Err=" + e, e);
+            }
+            return null;});
+        mStartButton.setText("停止");
+        updateInforText("正在进行第1轮测试");
+    }
+
+
+    private UnitCase.StateCb mStateCb = new UnitCase.StateCb() {
+        public void onStateChanged(int prev, int toState) {
+            ThreadManager.getInstance().doInThreadMain(()->{
+                TemplateVunitTestActivity.this.onStateChanged(prev, toState);
+            });
+        }
+        public void onCaseResult(int index, UnitResult unitResult) {
+            ThreadManager.getInstance().doInThreadMain(()-> {
+                TemplateVunitTestActivity.this.onCaseResult(index, unitResult);
+            });
+        }
+    };
     abstract protected JSONArray getSettingsDefaultJson();
+    protected abstract JSONObject getConfig();
     protected void onDestroy() {
         super.onDestroy();
     }
@@ -134,5 +228,30 @@ abstract public class TemplateVunitTestActivity extends Activity {
             default:
                 break;
         }
+    }
+    protected void onStateChanged(int prev, int toState) {
+        if (UnitCase.STATE_STOPPED == toState) {
+            switch (mState) {
+                case STATE_TESTING:
+                    processStateBaseChange(STATE_DEFAULT);
+                    break;
+                case STATE_AUTOTESTING:
+                    processStateBaseChange(STATE_AUTOTEST);
+                    break;
+            }
+        }
+    }
+    protected void onCaseResult(int index, UnitResult unitResult) {
+        Log.i(TAG,"onCaseResult index=" + index + ", level=" + unitResult.mLevel + ", msg=" + unitResult.mMsg);
+        if (unitResult.mLevel >= Log.ERROR) {
+            mFailCaseIndexSet.add(index);
+        }
+        RecordFragment.RecordItem item = new RecordFragment.RecordItem();
+        item.mStatus = unitResult.mLevel;
+        item.mRankNum = mTestCnt1 + 1;
+        item.mTimeStamp = System.currentTimeMillis();
+        item.mContent = unitResult.mMsg;
+        mRecordFragment.addRecord(item);
+        refreshTable(item);
     }
 }

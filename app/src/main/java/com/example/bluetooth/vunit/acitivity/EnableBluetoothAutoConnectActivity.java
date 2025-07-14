@@ -32,11 +32,55 @@ public class EnableBluetoothAutoConnectActivity extends TemplateVunitTestActivit
         return getJsonArrayFromList(mDefaultSettingsList);
     }
     protected void startTest() {
-        //super.startTest();
+        super.startTest();
         updateInforText("正在测试第0项");
     }
     protected void stopTest() {
         //super.stopTest();
         updateInforText("测试已停止");
+    }
+
+    protected JSONObject getConfig() {
+        JSONObject jsonObject = new JSONObject();
+        Utils.putJsonObject(jsonObject, UnitCase.CONF_KEY_UIDS, UnitRunner.UID);
+        String testTimes = Utils.getJsonObjectValFromJsonArray(mSettings,
+                TemplateVunitTestActivity.SETTINGS_KEY_KEY, UnitRunner.CONF_KEY_TEST_TIMES,
+                TemplateVunitTestActivity.SETTINGS_KEY_VALUE);
+        if (null != testTimes) {
+            Utils.putJsonObject(jsonObject, UnitRunner.CONF_KEY_TEST_TIMES, testTimes);
+        }
+        String testInterval = Utils.getJsonObjectValFromJsonArray(mSettings,
+                TemplateVunitTestActivity.SETTINGS_KEY_KEY, UnitRunner.CONF_KEY_TEST_INTERVAL,
+                TemplateVunitTestActivity.SETTINGS_KEY_VALUE);
+        if (null != testInterval) {
+            Utils.putJsonObject(jsonObject, UnitRunner.CONF_KEY_TEST_INTERVAL, testInterval);
+        }
+        {
+            JSONArray jsonArray = new JSONArray();
+            {
+                JSONObject jsonObject1 = new JSONObject();
+                Utils.putJsonObject(jsonObject1, UnitCase.CONF_KEY_UIDS, TurnOffBT.UID);
+                jsonArray.put(jsonObject1);
+            }
+            {
+                JSONObject jsonObject1 = new JSONObject();
+                Utils.putJsonObject(jsonObject1, UnitCase.CONF_KEY_UIDS, TurnOnBT.UID);
+                jsonArray.put(jsonObject1);
+            }
+
+            // 检查连接
+       //     {
+       //         JSONObject jsonObject1 = new JSONObject();
+       //         Utils.putJsonObject(jsonObject1, UnitCase.CONF_KEY_UIDS, CheckConnectedCase.UID);
+       //         Utils.putJsonObject(jsonObject1, CheckConnectedCase.CONF_KEY_ADDR,
+       //                 Utils.getJsonObjectValFromJsonArray(mSettings, SETTINGS_KEY_KEY,
+       //                         CONF_KEY_ADDR, SETTINGS_KEY_VALUE));
+       //         jsonArray.put(jsonObject1);
+       //     }
+            Utils.putJsonObject(jsonObject, UnitRunner.CONF_KEY_VAL, jsonArray);
+        }
+        Log.v(TAG, "getConfig: " + jsonObject.toString());
+
+        return jsonObject;
     }
 }
