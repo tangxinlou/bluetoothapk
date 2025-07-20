@@ -8,12 +8,19 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.bluetooth.Utils;
+
+import com.example.bluetooth.vunit.UnitCase;
+import com.example.bluetooth.vunit.UnitResult;
+import com.example.bluetooth.vunit.UnitRunner;
+import com.example.bluetooth.vunit.cases.TurnOffBT;
+import com.example.bluetooth.vunit.cases.TurnOnBT;
 public class EnableBluetoothAutoConnectActivity extends TemplateVunitTestActivity {
     public static final String TAG = "EnableBluetoothAutoConnectActivity";
     private static final List<String[]> mDefaultSettingsList = new ArrayList<String[]>() {{
-        add(new String[]{"k", "测试次数", "" + 1000,
+        add(new String[]{"t", "测试次数", "" + 1000,
                 SETTINGS_KEY_TYPE_VAL_STR});
-        add(new String[]{"v", "测试间隔/ms", "" + 2000,
+        add(new String[]{"i", "测试间隔/ms", "" + 2000,
                 SETTINGS_KEY_TYPE_VAL_STR});
         add(new String[]{"a", "测试设备", "00:00:00:00:00:00",
                 SETTINGS_KEY_TYPE_VAL_ADDR});
@@ -46,6 +53,7 @@ public class EnableBluetoothAutoConnectActivity extends TemplateVunitTestActivit
         String testTimes = Utils.getJsonObjectValFromJsonArray(mSettings,
                 TemplateVunitTestActivity.SETTINGS_KEY_KEY, UnitRunner.CONF_KEY_TEST_TIMES,
                 TemplateVunitTestActivity.SETTINGS_KEY_VALUE);
+        
         if (null != testTimes) {
             Utils.putJsonObject(jsonObject, UnitRunner.CONF_KEY_TEST_TIMES, testTimes);
         }

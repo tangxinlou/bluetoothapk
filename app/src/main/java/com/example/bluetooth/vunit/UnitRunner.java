@@ -1,6 +1,7 @@
 package com.example.bluetooth.vunit;
 import android.content.Context;
 import android.util.Log;
+import com.vivo.android.bluetooth.toolkit.Collector;
 import com.example.bluetooth.vunit.cases.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,6 +62,7 @@ public class UnitRunner extends UnitCase {
                     Log.w(TAG, "cur case test Num 0, skip: " + unitCase.getTag());
                     continue;
                 }
+                UnitCaseManager.getInstance().addCase(unitCase.getID(), unitCase.getTag());
                 UnitCaseManager.getInstance().addCase(unitCase.getID(), unitCase.getTag());
                 unitCase.registStateCb(mStateCb, unitCase.getTag());
                 future = executorService.submit(() -> {unitCase.run();return null;});
@@ -181,6 +183,9 @@ public class UnitRunner extends UnitCase {
             Log.w(TAG, "empty config");
             return;
         }
+        if (!(UID.equals(uid) || MultiThreadUnitRunner.UID.equals(uid))) {
+            Log.wtf(TAG, "unhandle jsonobject=" + jsonObject);
+        }
         String uid = jsonObject.optString(UnitCase.CONF_KEY_UIDS);
         if (!(UID.equals(uid) || MultiThreadUnitRunner.UID.equals(uid))) {
             Log.wtf(TAG, "unhandle jsonobject=" + jsonObject);
@@ -209,6 +214,8 @@ public class UnitRunner extends UnitCase {
     public String getSummary() {
         return mCollectorResult;
     }
+            case CheckConnectedCase.UID: return new CheckConnectedCase(context);
+            case StandbyConnectionCheck.UID: return new StandbyConnectionCheck(context);
     private static UnitCase createUnitCaseByUids(String uids, Context context) {
         switch (uids){
             case TurnOnBT.UID:return new TurnOnBT(context);

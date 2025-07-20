@@ -20,6 +20,13 @@ import com.example.bluetooth.VunitTestSettingsActivity;
 import com.example.bluetooth.vunit.UnitCase;
 import com.example.bluetooth.vunit.UnitResult;
 import com.example.bluetooth.vunit.UnitRunner;
+import android.os.PowerManager;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import android.content.Context;
 abstract public class TemplateVunitTestActivity extends Activity {
     public static final String TAG = "TemplateVunitTestActivity";
     private final String ClassName;
@@ -45,8 +52,12 @@ abstract public class TemplateVunitTestActivity extends Activity {
     protected static final int STATE_DEFAULT = 0;
     protected static final int STATE_TESTING = 1;
 
+    private PowerManager.WakeLock mWakeLock;
 
+    Future<String> mFuture = null;
+    ExecutorService mExecutorService = Executors.newFixedThreadPool(1);
     protected UnitRunner mUnitRunner;
+    protected int mState;
 
 
     public TemplateVunitTestActivity() {
@@ -63,7 +74,8 @@ abstract public class TemplateVunitTestActivity extends Activity {
         ListView tableListView = (ListView) findViewById(R.id.result_main_record_panel);
         mListViewAdapter = new TableAdapter(this, mList);
         tableListView.setAdapter(mListViewAdapter);
-        
+        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         clearList();
         mStartButton = (Button)findViewById(R.id.btn_start_search);
         mSettingButton = (Button)findViewById(R.id.btn_setting);
@@ -152,7 +164,7 @@ abstract public class TemplateVunitTestActivity extends Activity {
             case STATE_TESTING:{
                 switch (next) {
                     case STATE_DEFAULT:
-                        stopTest();
+                        //stopTest();
                         break;
                     default:
                         mState = prev;
@@ -174,9 +186,6 @@ abstract public class TemplateVunitTestActivity extends Activity {
         mTestCnt = 0;
         mTestCnt1 = 0;
         mStartButton.setText("停止");
-        BluetoothStateController.getInstance().regCb(mBluetoothStateControllerCallback,
-                BluetoothStateController.REGISTER_TYPE_LISTENER);
-        //ParsingJson(mSettings);
         mUnitRunner.config(getConfig());
         mUnitRunner.registStateCb(mStateCb, TAG);
         mFuture = mExecutorService.submit(() -> {
@@ -195,14 +204,10 @@ abstract public class TemplateVunitTestActivity extends Activity {
 
     private UnitCase.StateCb mStateCb = new UnitCase.StateCb() {
         public void onStateChanged(int prev, int toState) {
-            ThreadManager.getInstance().doInThreadMain(()->{
                 TemplateVunitTestActivity.this.onStateChanged(prev, toState);
-            });
         }
         public void onCaseResult(int index, UnitResult unitResult) {
-            ThreadManager.getInstance().doInThreadMain(()-> {
                 TemplateVunitTestActivity.this.onCaseResult(index, unitResult);
-            });
         }
     };
     abstract protected JSONArray getSettingsDefaultJson();
@@ -235,23 +240,36 @@ abstract public class TemplateVunitTestActivity extends Activity {
                 case STATE_TESTING:
                     processStateBaseChange(STATE_DEFAULT);
                     break;
-                case STATE_AUTOTESTING:
-                    processStateBaseChange(STATE_AUTOTEST);
-                    break;
             }
         }
     }
     protected void onCaseResult(int index, UnitResult unitResult) {
         Log.i(TAG,"onCaseResult index=" + index + ", level=" + unitResult.mLevel + ", msg=" + unitResult.mMsg);
         if (unitResult.mLevel >= Log.ERROR) {
-            mFailCaseIndexSet.add(index);
         }
-        RecordFragment.RecordItem item = new RecordFragment.RecordItem();
-        item.mStatus = unitResult.mLevel;
-        item.mRankNum = mTestCnt1 + 1;
-        item.mTimeStamp = System.currentTimeMillis();
-        item.mContent = unitResult.mMsg;
-        mRecordFragment.addRecord(item);
-        refreshTable(item);
+        refreshTable(unitResult);
+    }
+
+    public static String getDateTime(String formatString, long timeStamp) {
+        SimpleDateFormat format = new SimpleDateFormat(formatString);
+        String dateTime = format.format(new Date(timeStamp));
+        return dateTime;// 2012-10-03 23:41:31
+    }
+
+    public void refreshTable(UnitResult unitResult) {
+        if (unitResult == null) return;
+        BtResultData data = new BtResultData();
+        data.setId(String.valueOf(100));
+        data.setTimeStamp(getDateTime("HH:mm:ss", System.currentTimeMillis()));
+        data.status = unitResult.mLevel;
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append(Utils.logLevelToString(unitResult.mLevel));
+        sb.append("], ");
+        sb.append(unitResult.mMsg);
+        data.setResult(sb.toString());
+        mList.add(data);
+        mListViewAdapter.updateData(mList);
+        mListViewAdapter.notifyDataSetChanged();
     }
 }

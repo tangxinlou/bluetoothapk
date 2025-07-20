@@ -15,6 +15,16 @@ public class Utils {
         }
         return jsonObject;
     }
+    public static JSONObject getJsonObjectFromJsonArray(JSONArray jsonArray, String key,
+                                                        Object val) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject1 = getJsonObjectFromJsonArray(jsonArray, i);
+            Object val1 = jsonObject1.opt(key);
+            if (val == val1) return jsonObject1;
+            if (val != null && val.equals(val1)) return jsonObject1;
+        }
+        return null;
+    }
     public static void putJsonObject(JSONObject jsonObject, String key, Object object) {
         try {
             jsonObject.put(key, object);
@@ -30,5 +40,29 @@ public class Utils {
             Log.w(TAG, "getJsonArrayFromString with err", e);
         }
         return jsonArray;
+    }
+    public static String getJsonObjectValFromJsonArray(JSONArray jsonArray, String jObjKey,
+                                                        Object jObjVal, String valKey) {
+        JSONObject jsonObject = getJsonObjectFromJsonArray(jsonArray, jObjKey, jObjVal);
+        if (null == jsonObject) return null;
+        return jsonObject.optString(valKey, null);
+    }
+    public static String logLevelToString(int level) {
+        switch (level) {
+            case Log.VERBOSE:
+                return "V";
+            case Log.DEBUG:
+                return "D";
+            case Log.INFO:
+                return "I";
+            case Log.WARN:
+                return "W";
+            case Log.ERROR:
+                return "E";
+            case Log.ASSERT:
+                return "ASSERT";
+            default:
+                return "U";
+        }
     }
 }

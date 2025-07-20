@@ -89,14 +89,8 @@ public abstract class UnitCase {
         }
         synchronized(mStateCbHandlerMap) {
             for (StateCb stateCb : mStateCbHandlerMap.keySet()) {
-                Handler handler = mStateCbHandlerMap.get(stateCb);
-                if (null == handler) {
-                    stateCb.onCaseResult(mTestIndex, new UnitResult(level, msg, getID()));
-                } else {
-                    int index = mTestIndex;
-                    Log.d(getTag(), "index=" + index + ", level=" + level + ", msg=" + msg);
-                    handler.post(() -> stateCb.onCaseResult(index, new UnitResult(level, msg, getID())));
-                }
+                stateCb.onCaseResult(mTestIndex, new UnitResult(level, msg, getID()));
+
             }
         }
     }
