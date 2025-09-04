@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.content.Intent;
+import com.example.bluetooth.vunit.acitivity.EnableBluetoothAutoConnectActivity;
 
 public class MainActivity extends Activity {
 
 
     private Button btnSender = null;
+    private Button btnReceiver  = null;
     private OnClickListener listener = new OnClickListener() {
         public void onClick(View v) {
             int id = v.getId();
