@@ -19,6 +19,8 @@ public class MainActivity extends Activity {
             if (id == R.id.btn_start_sender_activity) {
                 startSender();
 
+            } else if (id == R.id.btn_start_receiver_activity){
+                startReceiver();
             }
         }
     };
