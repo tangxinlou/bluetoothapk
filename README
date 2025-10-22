@@ -18,3 +18,6 @@ D:\work\bluetoothapk\app\build\outputs\apk\debug\debug.apk 就是编译生成的
 modify install
 20241116 修改install.bat,apk 路径变为相对路径，  使之可以适用git仓库，不再强制显示安装绝对路径的apk，
 
+20251021 
+添加了，循环调用蓝牙开关的功能，添加蓝牙ble 扫描 广播，ble 连接功能
+

@@ -5,6 +5,7 @@ import android.app.TabActivity;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.content.Intent;
+import com.example.bluetooth.interconnect.InterConnectActivity;
 
 public class BluetoothTestTab extends TabActivity {
 
@@ -23,6 +24,10 @@ public class BluetoothTestTab extends TabActivity {
                 getString(R.string.list_tab)).setIndicator(
                 getString(R.string.list_tab)).setContent(
                 new Intent(this, ThirdActivity.class)));
+        tabHost.addTab(tabHost.newTabSpec(
+                getString(R.string.interconnect_tab)).setIndicator(
+                getString(R.string.interconnect_tab)).setContent(
+                new Intent(this, InterConnectActivity.class)));
         tabHost.setCurrentTab(0);
     }
 

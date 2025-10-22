@@ -10,7 +10,9 @@ rem adb shell chmod 644 /system/priv-app/debugapp/app-debug.apk
 rem adb shell ls -la /system/priv-app/debugapp/app-debug.apk
 rem adb shell setprop persist.security.disable_verity 1
 rem adb disable-verity
-adb push  app\build\outputs\apk\debug\app-debug.apk  /sdcard/app-debug.apk
-adb shell "su -c 'cp /sdcard/app-debug.apk /data/adb/modules/PixelMod/system/priv-app/debug'"
-adb shell "su -c 'ls -la /data/adb/modules/PixelMod/system/priv-app/debug'"
+
+rem adb push  app\build\outputs\apk\debug\app-debug.apk  /sdcard/app-debug.apk
+rem adb shell "su -c 'cp /sdcard/app-debug.apk /data/adb/modules/PixelMod/system/priv-app/debug'"
+rem adb shell "su -c 'ls -la /data/adb/modules/PixelMod/system/priv-app/debug'"
+adb install -r app\build\outputs\apk\debug\app-debug.apk
 pause
