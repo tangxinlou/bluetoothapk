@@ -43,6 +43,21 @@
         android:layout_height="wrap_content"
         android:text="连接设备"
         android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btn_client"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="客户端模式"
+        android:textSize="18sp"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/btn_server"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="服务端模式"
+        android:textSize="18sp" />
     
     <TextView
         android:layout_width="match_parent"

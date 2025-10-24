@@ -28,6 +28,7 @@ public class InterConnectActivity  extends AppCompatActivity {
     private Button startScanButton;
     private Button startBroadcastButton;
     private Button connectButton;
+    private Button btnClient, btnServer;
     BluetoothDevice selectedDevice = null;
     
     @Override
@@ -45,6 +46,8 @@ public class InterConnectActivity  extends AppCompatActivity {
         startScanButton = findViewById(R.id.startScanButton);
         startBroadcastButton = findViewById(R.id.startBroadcastButton);
         connectButton = findViewById(R.id.connectButton);
+        btnClient = findViewById(R.id.btn_client);
+        btnServer = findViewById(R.id.btn_server);
     }
     
     private void initializeBluetooth() {
@@ -114,6 +117,16 @@ public class InterConnectActivity  extends AppCompatActivity {
         connectButton.setOnClickListener(v -> {
             Intent intent = new Intent(InterConnectActivity.this, ConnectionActivity.class);
             intent.putExtra("scan_device", selectedDevice);
+            startActivity(intent);
+        });
+        btnClient.setOnClickListener(v -> {
+            Intent intent = new Intent(InterConnectActivity.this, ClientActivity.class);
+            intent.putExtra("scan_device", selectedDevice);
+            startActivity(intent);
+        });
+
+        btnServer.setOnClickListener(v -> {
+            Intent intent = new Intent(InterConnectActivity.this, ServerActivity.class);
             startActivity(intent);
         });
     }
