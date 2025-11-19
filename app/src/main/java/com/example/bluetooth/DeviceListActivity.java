@@ -69,6 +69,10 @@ public class DeviceListActivity extends Activity {
             String address = info.substring(info.length() - 17);
             Log.i(TAG, "tangxinlou debug onItemClick() info=" + info + ", address=" + address);
             Log.i(TAG, "tangxinlou debug onItemClick() address=" + address);
+            Intent intent = new Intent();
+            intent.putExtra("SELECTED_DEVICE", address);
+            setResult(RESULT_OK, intent);
+            finish();
         }
     };
     protected void onCreate(Bundle savedInstanceState) {

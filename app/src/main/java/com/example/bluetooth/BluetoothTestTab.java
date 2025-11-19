@@ -6,6 +6,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.content.Intent;
 import com.example.bluetooth.interconnect.InterConnectActivity;
+import com.example.bluetooth.interconnect.SocketConnect;
 import com.example.bluetooth.nrf.NrfActivity;
 import android.widget.LinearLayout;
 import android.widget.FrameLayout;
@@ -37,6 +38,11 @@ public class BluetoothTestTab extends TabActivity {
                 getString(R.string.interconnect_tab)).setIndicator(
                 getString(R.string.interconnect_tab)).setContent(
                 new Intent(this, InterConnectActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)));
+        tabHost.addTab(tabHost.newTabSpec(
+                getString(R.string.socket_tab)).setIndicator(
+                getString(R.string.socket_tab)).setContent(
+                new Intent(this, SocketConnect.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)));
         tabHost.setCurrentTab(0);
     }

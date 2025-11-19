@@ -111,6 +111,11 @@
             android:label="蓝牙自动化测试"
             android:exported="true">
         </activity>
+          <activity
+            android:name=".interconnect.SocketConnect"
+            android:label="蓝牙自动化测试"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
